@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<elements2mist>
+	
+<!-- ================================ hooking section ================================= -->
+	<hooking mist="01">
+		
+		<SetWindowsHookExW mist="01">
+			<ProcedureAddress type="type_hex"/>
+ 			<HookIdentifier type="type_integer"/>
+	 		<ModuleAddress type="type_hex"/>
+ 			<ThreadId type="type_integer"/>
+		</SetWindowsHookExW>
+		
+		<SetWindowsHookExA mist="02">
+			<ProcedureAddress type="type_hex"/>
+ 			<HookIdentifier type="type_integer"/>
+ 			<ModuleAddress type="type_hex"/>
+ 			<ThreadId type="type_integer"/>
+		</SetWindowsHookExA>
+		
+	</hooking>
+<!-- ================================ network section ================================= -->
+	<network mist="02">
+		
+		<HttpOpenRequestA mist="01">
+			<Path type="type_string"/>
+ 			<Flags type="type_integer"/>
+ 			<InternetHandle type="type_hex"/>
+		</HttpOpenRequestA>
+
+		<getaddrinfo mist="02">
+			<ServiceName type="type_string"/>
+ 			<NodeName type="type_string"/>
+		</getaddrinfo>
+	
+		<InternetOpenUrlA mist="03">
+			<URL type="type_string"/>
+ 			<Headers type="type_string"/>
+ 			<ConnectionHandle type="type_hex"/>
+ 			<Flags type="type_integer"/>
+		</InternetOpenUrlA>
+	
+		<HttpSendRequestA mist="04">
+			<RequestHandle type="type_hex"/>
+ 			<Headers type="type_string"/>
+ 			<PostData type="type_hex"/>
+		</HttpSendRequestA>
+	
+		<URLDownloadToFileW mist="05">
+			<URL type="type_string"/>
+			<FileName type="type_string"/>
+		</URLDownloadToFileW>
+ 	
+	</network>
+
+<!-- ================================ windows section ================================= -->
+	
+	<windows mist="03">
+	
+		<FindWindowA mist="01">
+			<ClassName type="type_string"/>
+ 			<WindowName type="type_string"/>
+		</FindWindowA>
+	
+		<FindWindowExA mist="02">
+			<ClassName type="type_string"/>
+ 			<WindowName type="type_string"/>
+		</FindWindowExA>
+	
+		<FindWindowExW mist="03">
+			<ClassName type="type_string"/>
+ 			<WindowName type="type_string"/>
+		</FindWindowExW>
+	
+		<FindWindowW mist="04">
+			<ClassName type="type_string"/>
+ 			<WindowName type="type_string"/>
+		</FindWindowW>
+
+	</windows>
+ 
+<!-- ================================ threading section ================================= -->
+
+	<threading mist="04">
+
+		<CreateRemoteThread mist="01">
+			<StartRoutine type="type_hex"/>
+ 			<Parameter type="type_hex"/>
+ 			<ProcessHandle type="type_hex"/>
+ 			<CreationFlags type="type_integer"/>
+ 			<ThreadId type="type_integer"/>
+		</CreateRemoteThread>
+	
+		<OpenThread mist="02">
+			<DesiredAccess type="type_integer"/>
+ 			<ThreadId type="type_integer"/>
+		</OpenThread>
+	
+		<NtGetContextThread mist="03">
+			<ThreadHandle type="type_hex"/>
+		</NtGetContextThread>
+	
+		<CreateThread mist="04">
+			<StartRoutine type="type_hex"/>
+ 			<Parameter type="type_hex"/>
+ 			<CreationFlags type="type_integer"/>
+ 			<ThreadId type="type_integer"/>
+		</CreateThread>
+	
+		<NtSetContextThread mist="05">
+			<ThreadHandle type="type_hex"/>
+		</NtSetContextThread>
+	
+		<NtSuspendThread mist="06">
+			<SuspendCount type="type_integer"/>
+ 			<ThreadHandle type="type_hex"/>
+		</NtSuspendThread>
+	
+		<ExitThread mist="07">
+			<ExitCode type="type_integer"/>
+		</ExitThread>
+	
+		<NtResumeThread mist="08">
+			<SuspendCount type="type_integer"/>
+ 			<ThreadHandle type="type_hex"/>
+		</NtResumeThread>
+		
+
+	</threading>
+ 	
+<!-- ================================ process section ================================= -->
+
+	<process mist="05">
+		
+		<NtWriteVirtualMemory mist="01">
+			<Buffer type="type_hex"/>
+ 			<BaseAddress type="type_hex"/>
+ 			<ProcessHandle type="type_hex"/>
+		</NtWriteVirtualMemory>
+ 		
+		<TerminateProcess mist="02">
+			<ProcessHandle type="type_hex"/>
+ 			<ExitCode type="type_integer"/>
+		</TerminateProcess>
+ 		
+		<NtReadVirtualMemory mist="03">
+			<Buffer type="type_hex"/>
+ 			<BaseAddress type="type_hex"/>
+ 			<ProcessHandle type="type_hex"/>
+		</NtReadVirtualMemory>
+ 		
+		<VirtualAllocEx mist="04">
+			<Protection type="type_integer"/>
+ 			<AllocationType type="type_integer"/>
+ 			<Size type="type_integer"/>
+ 			<ProcessHandle type="type_hex"/>
+ 			<Address type="type_hex"/>
+		</VirtualAllocEx>
+ 		
+		<NtCreateProcessEx mist="05">
+			<ProcessHandle type="type_hex"/>
+ 			<FileName type="type_string"/>
+		</NtCreateProcessEx>
+ 		
+		<OpenProcess mist="06">
+			<DesiredAccess type="type_integer"/>
+ 			<ProcessId type="type_integer"/>
+		</OpenProcess>
+ 		
+		<CreateProcessInternalW mist="07">
+			<ApplicationName type="type_string"/>
+ 			<ProcessId type="type_integer"/>
+ 			<CommandLine type="type_string"/>
+ 			<ThreadHandle type="type_hex"/>
+ 			<ProcessHandle type="type_hex"/>
+ 			<ThreadId type="type_integer"/>
+ 			<CreationFlags type="type_integer"/>
+		</CreateProcessInternalW>
+ 		
+		<ExitProcess mist="08">
+			<ExitCode type="type_integer"/>
+		</ExitProcess>
+ 		
+		<VirtualFreeEx mist="09">
+			<FreeType type="type_integer"/>
+ 			<Size type="type_integer"/>
+ 			<ProcessHandle type="type_hex"/>
+ 			<Address type="type_hex"/>
+		</VirtualFreeEx>
+ 		
+		<VirtualProtectEx mist="0a">
+			<Protection type="type_integer"/>
+ 			<Size type="type_integer"/>
+ 			<ProcessHandle type="type_hex"/>
+ 			<Address type="type_hex"/>
+		</VirtualProtectEx>
+	
+	</process>
+	
+<!-- ================================ system section ================================= -->
+ 	
+	<system mist="06">
+	
+		<UnhookWindowsHookEx mist="01">
+			<HookHandle type="type_hex"/>
+		</UnhookWindowsHookEx>
+ 		
+		<LdrGetProcedureAddress mist="02">
+			<Ordinal type="type_integer"/>
+ 			<FunctionName type="type_string"/>
+ 			<ModuleHandle type="type_hex"/>
+		</LdrGetProcedureAddress>
+ 		
+		<NtDelayExecution mist="03">
+			<Milliseconds type="type_integer"/>
+		</NtDelayExecution>
+ 		
+		<IsDebuggerPresent mist="04">
+		</IsDebuggerPresent> 
+		
+		<LookupPrivilegeValueW mist="05">
+			<SystemName type="type_string"/>
+ 			<PrivilegeName type="type_string"/>
+		</LookupPrivilegeValueW>
+ 			
+		<NtClose mist="06">
+			<Handle type="type_hex"/>
+		</NtClose>
+ 		
+		<LdrLoadDll mist="07">
+			<BaseAddress type="type_hex"/>
+ 			<Flags type="type_integer"/>
+ 			<FileName type="type_string"/>
+		</LdrLoadDll>
+ 		
+		<LdrGetDllHandle mist="08">
+			<ModuleHandle type="type_hex"/>
+ 			<FileName type="type_string"/>
+		</LdrGetDllHandle>
+ 	
+	</system>
+	
+<!-- ================================ services section ================================= -->
+
+	<services mist="07">
+
+		<StartServiceW mist="01">
+			<ServiceHandle type="type_hex"/>
+ 			<Arguments type="type_string"/>
+		</StartServiceW>
+ 		
+		<OpenServiceA mist="02">
+			<DesiredAccess type="type_integer"/>
+ 			<ServiceName type="type_string"/>
+ 			<ServiceControlManager type="type_hex"/>
+		</OpenServiceA>
+ 		
+		<CreateServiceA mist="03">
+			<ServiceType type="type_integer"/>
+ 			<DisplayName type="type_string"/>
+ 			<BinaryPathName type="type_string"/>
+ 			<ServiceStartName type="type_string"/>
+ 			<DesiredAccess type="type_integer"/>
+ 			<ServiceName type="type_string"/>
+ 			<StartType type="type_integer"/>
+ 			<ServiceControlHandle type="type_hex"/>
+ 			<Password type="type_string"/>
+ 			<ErrorControl type="type_integer"/>
+		</CreateServiceA>
+ 		
+		<OpenSCManagerW mist="04">
+			<MachineName type="type_string"/>
+ 			<DatabaseName type="type_string"/>
+ 			<DesiredAccess type="type_integer"/>
+		</OpenSCManagerW>
+ 		
+		<OpenServiceW mist="05">
+			<DesiredAccess type="type_integer"/>
+ 			<ServiceName type="type_string"/>
+ 			<ServiceControlManager type="type_hex"/>
+		</OpenServiceW>
+ 		
+		<ControlService mist="06">
+			<ServiceHandle type="type_hex"/>
+ 			<ControlCode type="type_integer"/>
+		</ControlService>
+ 		
+		<StartServiceA mist="07">
+			<ServiceHandle type="type_hex"/>
+ 			<Arguments type="type_string"/>
+		</StartServiceA>
+ 		
+		<DeleteService mist="08">
+			<ServiceHandle type="type_hex"/>
+		</DeleteService>
+ 		
+		<OpenSCManagerA mist="09">
+			<MachineName type="type_string"/>
+ 			<DatabaseName type="type_string"/>
+ 			<DesiredAccess type="type_integer"/>
+		</OpenSCManagerA>	
+ 	
+	</services>
+	
+<!-- ================================ synchronization section ================================= -->
+
+	<synchronization mist="08">
+	
+		<NtOpenMutant mist="01">
+			<MutexName type="type_string"/>
+ 			<Handle type="type_hex"/>
+		</NtOpenMutant>
+ 		
+		<NtCreateMutant mist="02">
+			<MutexName type="type_string"/>
+ 			<Handle type="type_hex"/>
+ 			<InitialOwner type="type_integer"/>
+		</NtCreateMutant>
+	
+	</synchronization>
+ 	
+<!-- ================================ registry section ================================= -->
+
+	<registry mist="09">
+
+		<RegCreateKeyExW mist="01">
+			<Access type="type_integer"/>
+ 			<Class type="type_string"/>
+ 			<Handle type="type_hex"/>
+ 			<Registry type="type_hex"/>
+ 			<SubKey type="type_string"/>
+		</RegCreateKeyExW>
+ 		
+		<RegDeleteKeyA mist="02">
+			<Handle type="type_hex"/>
+ 			<SubKey type="type_string"/>
+		</RegDeleteKeyA>
+ 		
+		<RegEnumValueW mist="03">
+			<Index type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<Data type="type_hex"/>
+ 			<ValueName type="type_string"/>
+		</RegEnumValueW>
+ 		
+		<RegCloseKey mist="04">
+			<Handle type="type_hex"/>
+		</RegCloseKey>
+ 		
+		<RegDeleteKeyW mist="05">
+			<Handle type="type_hex"/>
+ 			<SubKey type="type_string"/>
+		</RegDeleteKeyW>
+ 		
+		<RegSetValueExW mist="06">
+			<Buffer type="type_hex"/>
+ 			<Type type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<ValueName type="type_string"/>
+		</RegSetValueExW>
+ 		
+		<RegQueryValueExA mist="07">
+			<Buffer type="type_hex"/>
+ 			<Type type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<ValueName type="type_string"/>
+		</RegQueryValueExA>
+ 		
+		<RegEnumKeyExW mist="08">
+			<Index type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<Name type="type_string"/>
+ 			<Class type="type_string"/>
+		</RegEnumKeyExW>
+ 		
+		<RegOpenKeyExW mist="09">
+			<Handle type="type_hex"/>
+ 			<Registry type="type_hex"/>
+ 			<SubKey type="type_string"/>
+		</RegOpenKeyExW>
+ 		
+		<RegSetValueExA mist="0a">
+			<Buffer type="type_hex"/>
+ 			<Type type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<ValueName type="type_string"/>
+		</RegSetValueExA>
+ 		
+		<RegDeleteValueA mist="0b">	
+			<Handle type="type_hex"/>
+ 			<ValueName type="type_string"/>
+		</RegDeleteValueA>
+ 		
+		<RegEnumKeyW mist="0c">
+			<Index type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<Name type="type_string"/>
+		</RegEnumKeyW>
+ 		
+		<RegCreateKeyExA mist="0d">
+			<Access type="type_integer"/>
+ 			<Class type="type_string"/>
+ 			<Handle type="type_hex"/>
+ 			<Registry type="type_hex"/>
+ 			<SubKey type="type_string"/>
+		</RegCreateKeyExA>
+ 		
+		<RegOpenKeyExA mist="0e">
+			<Handle type="type_hex"/>
+ 			<Registry type="type_hex"/>
+ 			<SubKey type="type_string"/>
+		</RegOpenKeyExA>
+ 		
+		<RegEnumValueA mist="0f">
+			<Index type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<Data type="type_hex"/>
+ 			<ValueName type="type_string"/>
+		</RegEnumValueA>
+ 		
+		<RegEnumKeyExA mist="10">
+			<Index type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<Name type="type_string"/>
+ 			<Class type="type_string"/>
+		</RegEnumKeyExA>
+ 		
+		<RegQueryValueExW mist="11">
+			<Buffer type="type_hex"/>
+ 			<Type type="type_integer"/>
+ 			<Handle type="type_hex"/>
+ 			<ValueName type="type_string"/>
+		</RegQueryValueExW>
+        
+        <NtOpenKey mist="12">
+			<DesiredAccess type="type_integer"/>
+ 			<KeyHandle type="type_hex"/>
+		</NtOpenKey>
+        
+	</registry>
+
+<!-- ================================ filesystem section ================================= -->
+	
+	<filesystem mist="0a">
+
+		<NtOpenFile mist="01">
+			<DesiredAccess type="type_integer"/>
+ 			<FileHandle type="type_hex"/>
+ 			<FileName type="type_string"/>
+		</NtOpenFile>
+		
+		<MoveFileWithProgressW mist="02">
+			<ExistingFileName type="type_string"/>
+ 			<NewFileName type="type_string"/>
+		</MoveFileWithProgressW>
+	
+		<NtCreateFile mist="03">
+			<CreateDisposition type="type_integer"/>
+ 			<DesiredAccess type="type_integer"/>
+ 			<FileHandle type="type_hex"/>
+ 			<FileName type="type_string"/>
+		</NtCreateFile>
+	
+		<NtReadFile mist="04">
+			<Buffer type="type_hex"/>
+ 			<FileHandle type="type_hex"/>	
+		</NtReadFile>
+	
+		<CreateDirectoryW mist="05">
+			<DirectoryName type="type_string"/>
+		</CreateDirectoryW>
+	
+		<DeleteFileW mist="06">
+			<FileName type="type_string"/>
+		</DeleteFileW>
+	
+		<NtWriteFile mist="07">
+			<Buffer type="type_hex"/>
+ 			<FileHandle type="type_hex"/>
+		</NtWriteFile>
+
+	</filesystem>
+
+ <!-- ================================ device section ================================= -->
+
+	<device mist="0b">
+		
+		<DeviceIoControl mist="01">
+			<DeviceHandle type="type_hex"/>
+ 			<OutBuffer type="type_hex"/>
+ 			<IoControlCode type="type_integer"/>
+ 			<InBuffer type="type_hex"/>
+		</DeviceIoControl>
+	
+	</device>
+<!-- ================================ virtual memory ==================================-->
+    <memory mist="0c">
+        <NtOpenSection mist="01">
+            <DesiredAccess type="type_integer"/>
+            <ObjectAttributes type="type_string"/>
+            <SectionHandle type="type_hex"/>
+       </NtOpenSection>
+    
+        <NtCreateSection mist="02">
+            <DesiredAccess type="type_integer"/>
+            <FileHandle type="type_hex"/>
+            <ObjectAttributes type="type_string"/>
+            <SectionHandle type="type_hex"/>
+        </NtCreateSection>
+        
+        <NtAllocateVirtualMemory mist="03">
+            <BaseAddress  type="type_hex"/>
+        </NtAllocateVirtualMemory>
+        
+    </memory>
+<!-- ================================ socket ==================================-->
+    <socket mist="0d">
+        <WSAStartup mist="01">
+            <VersionRequested type="type_hex"/>
+        </WSAStartup>
+    </socket>
+</elements2mist>
