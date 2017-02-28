@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-class_mist.py
+cuckoo2mist.py
 
-Created by Philipp Trinius on 2013-11-10.
+Created by Dr. Philipp Trinius on 2013-11-10.
+Modified by Grégoire Martinache on 2017-02
+
 Copyright (c) 2013 pi-one.net . 
 
 This program is free software; you can redistribute it and/or modify it 
@@ -20,8 +22,9 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see <http://www.gnu.org/licenses/>
 """
 
-__author__ = "philipp trinius"
-__version__ = "0.2"
+__author__ = "philipp trinius & gregoire martinache"
+__license__ = "GPL"
+__version__ = "0.3"
 
 
 import os
@@ -38,7 +41,7 @@ class mistit(object):
 
 	def __init__(self, input_file, elements2mist, types2mist):
 		self.infile = input_file
-		print 'Generating MIST report for "%s"...' % self.infile
+		print('Generating MIST report for "%s"...' % self.infile)
 		self.skiplist = []
 
 		self.ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
@@ -177,6 +180,7 @@ class mistit(object):
 				self.mist.write( translate_node.attrib["mist"] + " |" )
 				for attrib_node in translate_node.getchildren():
 					value = self.types2mist.find(attrib_node.attrib["type"]).attrib["default"]
+		# There is something to do here
 					#for arg in api_call["arguments"]:
 						#if arg["name"] == attrib_node.tag:
 					for arg in arguments:

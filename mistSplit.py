@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-mistSplit.py
+cuckoo2mist.py
 
-Created by Philipp Trinius on 2013-11-10.
+Created by Dr. Philipp Trinius on 2013-11-10.
+Modified by Grégoire Martinache on 2017-02
+
 Copyright (c) 2013 pi-one.net . 
 
 This program is free software; you can redistribute it and/or modify it 
@@ -20,8 +22,9 @@ You should have received a copy of the GNU General Public License along with
 this program; if not, see <http://www.gnu.org/licenses/>
 """
 
-__author__ = "philipp trinius"
-__version__ = "0.2"
+__author__ = "philipp trinius & gregoire martinache"
+__license__ = "GPL"
+__version__ = "0.3"
 
 import ntpath
 
