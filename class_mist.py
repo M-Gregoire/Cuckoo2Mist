@@ -31,7 +31,7 @@ import sys
 import re
 import xml.etree.cElementTree as ET
 import mistSplit as mysplit
-from cStringIO import StringIO
+from io import StringIO
 import gzip
 import json
 
@@ -232,14 +232,13 @@ class mistit(object):
 
 
 if __name__ == '__main__':
-        elements2mist.parse("conf/cuckoo_elements2mist_leveled.xml")
-        types2mist = ET.ElementTree()
-        types2mist.parse("conf/cuckoo_types2mist.xml")
-
+	elements2mist.parse("conf/cuckoo_elements2mist_leveled.xml")
+	types2mist = ET.ElementTree()
+	types2mist.parse("conf/cuckoo_types2mist.xml")
 	x = mistit('reports/report.json', elements2mist, types2mist)
 	if x.parse() and x.convert():
 		x.write('report/report.mist')
 	else:
-		print x.errormsg
+		print(x.errormsg)
 	
  
