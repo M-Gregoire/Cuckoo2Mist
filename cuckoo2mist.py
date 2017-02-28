@@ -83,13 +83,13 @@ def generate_Mist_Reports(files, e2m, t2m):
 			t.start()
 	except KeyboardInterrupt:
 		pass
-	print '\nAborting %s threads...' % len(thlist)
+	print('\nAborting %s threads...' % len(thlist))
 	for t in thlist:
 		t.join()
 		thlist.remove(t)
-		print '  Aborted one thread - %s remaining' % len(thlist)
+		print('  Aborted one thread - %s remaining' % len(thlist))
 		sys.stdout.flush()
-	print "  --> All threads aborted\n"
+	print("  --> All threads aborted\n")
 
 
 
@@ -119,26 +119,26 @@ def main(argv=None):
 			if option in ("-i", "--input"):
 				f_input = value
 				
-		print "Reading configuration files from %s ..." % (f_configdir), 
+		print("Reading configuration files from %s ..." % (f_configdir))
 		(e2m, t2m) = read_configuration(f_configdir)
-		print " done."
+		print(" done.")
 		
 		log_md5s_before = get_log_md5s()
 		
-		print "Reading %s" % (f_input),
+		print("Reading %s" % (f_input))
 		files = []
 		if os.path.exists(f_input):
 			for ffile in os.listdir(f_input):
 				file = os.path.join(f_input, ffile)
 				if os.path.isfile(file) and file.endswith(".json"):
 					files.append(file)
-					print ".",
+					print(".")
 		if len(files) == 0:
 			# no reports found
-			print "No reports found."
+			print ("No reports found.")
 			sys.exit(1)
 		else:
-			print " done."
+			print (" done.")
 			
 		generate_Mist_Reports(files, e2m, t2m)
 							
