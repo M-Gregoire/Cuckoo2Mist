@@ -201,13 +201,13 @@ class mistit(object):
 		processes = {}
 		procs = self.behaviour_report['behavior']['processes']
 		for proc in procs:
-			process_id = proc['process_id']
-			parent_id = proc['parent_id']
+			process_id = proc['pid']
+			parent_id = proc['ppid']
 			process_name = proc['process_name']
 			calls = proc['calls']
 			threads = {}
 			for call in calls:
-				thread_id = call['thread_id']
+				thread_id = call['tid']
 				try:
 					threads[thread_id].append(call)	
 				except:
