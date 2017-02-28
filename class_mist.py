@@ -155,35 +155,41 @@ class mistit(object):
 			return myextension + ' ' + mypath
 	
 	
-		
+	# Converts a thread to mist	
 	def convert_thread(self, pid, tid, api_calls):
 		self.mist.write( '# process ' + str(pid) + ' thread ' + str(tid) + ' #\n' )
 		for api_call in api_calls:
 			arguments 	= api_call['arguments']
 			category 	= api_call['category']
 			api 		= api_call['api']
-			if not 3 == 4: #operation_node.tag in self.skiplist:
-				values = ""
-				category_node = self.elements2mist.find(".//" + category)
-				if category_node == None:
-					self.missing[category] = 1
-					continue
-				self.mist.write( category_node.attrib["mist"] + " " )
-				translate_node = self.elements2mist.find(".//" + api)
-				if translate_node == None:
-					self.missing[api] = 1
-					continue
-				self.mist.write( translate_node.attrib["mist"] + " |" )
-				for attrib_node in translate_node.getchildren():
-					value = self.types2mist.find(attrib_node.attrib["type"]).attrib["default"]
-		# There is something to do here
-					#for arg in api_call["arguments"]:
-						#if arg["name"] == attrib_node.tag:
-					for arg in arguments:
-						if arg[1] == attrib_node.tag:
-							value = self.convertValue(attrib_node.attrib["type"], arg["value"], attrib_node.tag)
-					self.mist.write( " " + value )
-				self.mist.write( '\n' )
+			values = ""
+			# Find the corresponding category node in the XML
+			category_node = self.elements2mist.find(".//" + category)
+			if category_node == None:
+				self.missing[category] = 1
+				continue
+			# Write in the report the category node code (cf mist format)
+			self.mist.write( category_node.attrib["mist"] + " " )
+
+			# Find the corresponding api node in the XML
+			translate_node = self.elements2mist.find(".//" + api)
+			if translate_node == None:
+				self.missing[api] = 1
+				continue
+			# Write in the report the api node code (cf mist format)
+			self.mist.write( translate_node.attrib["mist"] + " |" )
+
+			
+			for attrib_node in translate_node.getchildren():
+				value = self.types2mist.find(attrib_node.attrib["type"]).attrib["default"]
+	# There is something to do here
+				#for arg in api_call["arguments"]:
+					#if arg["name"] == attrib_node.tag:
+				for arg in arguments:
+					if arg[1] == attrib_node.tag:
+						value = self.convertValue(attrib_node.attrib["type"], arg["value"], attrib_node.tag)
+				self.mist.write( " " + value )
+			self.mist.write( '\n' )
 		return True
 	
 	def convertValue(self, ttype, value, name):
@@ -207,6 +213,9 @@ class mistit(object):
 			parent_id = proc['ppid']
 			process_name = proc['process_name']
 			calls = proc['calls']
+			# Create a dictionnary of threads
+			# The key is the n° of the thread
+			# The content is all calls he makes
 			threads = {}
 			for call in calls:
 				thread_id = call['tid']
@@ -216,13 +225,18 @@ class mistit(object):
 					threads[thread_id] = []
 					threads[thread_id].append(call)
 			
+			# Create a dictionnary of process
+			# The key is the n° of the process
 			processes[process_id] = {}
 			processes[process_id]["parent_id"] = parent_id 
 			processes[process_id]["process_name"] = process_name 
 			processes[process_id]["threads"] = threads 
 			
+		# For all processes...
 		for p_id in processes:
+			# For each threads of those processes...
 			for t_id in processes[p_id]["threads"]:
+				# Convert the thread
 				self.convert_thread(p_id, t_id, processes[p_id]["threads"][t_id])
 
 		if len(self.missing.keys()) > 0:
