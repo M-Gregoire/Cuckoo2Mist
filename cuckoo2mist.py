@@ -21,13 +21,14 @@ this program; if not, see <http://www.gnu.org/licenses/>
 """
 
 __author__ = "philipp trinius"
-__version__ = "0.2"
-
+__maintainer__ = "gregoire martinache"
+__license__ = "GPL"
+__version__ = "0.3"
 
 
 import re
 import os, sys
-import getopt
+import argparse
 import subprocess
 import time
 import hashlib
@@ -43,15 +44,16 @@ class Usage(Exception):
 	def __init__(self, msg):
 		self.msg = msg
 
-def get_log_md5s():
-	result = {}
-	for f in os.listdir('log'):
-		hfile = open(os.path.join('log', f), "r")
-		h = hashlib.sha1()
-		h.update(hfile.read())
-		result[f] = h.hexdigest()
-		hfile.close()
-	return result
+#def get_log_md5s():
+#	result = {}
+#	for f in os.listdir('log'):
+#		hfile = open(os.path.join('log', f), "r")
+#		h = hashlib.sha1()
+#		h.update(hfile.read())
+#		result[f] = h.hexdigest()
+#		hfile.close()
+#	print(result)
+#	return result
 
 def read_configuration(fconfigdir):
 	elements2mist = ET.ElementTree()
@@ -93,37 +95,49 @@ def generate_Mist_Reports(files, e2m, t2m):
 
 
 
-def main(argv=None):
-	if argv is None:
-		argv = sys.argv
+#def main(argv=None):
+def main():
+	# Get arguments
+	argv = sys.argv
 	try:
-		try:
-			opts, args = getopt.getopt(argv[1:], "hcio:v", ["help", "config_dir=", "input="])
-		except getopt.error, msg:
-			raise Usage(msg)
-			
+		# argsparse is better than getopt !
+		#try:
+		#	opts, args = getopt.getopt(argv[1:], "hcio:v", ["help", "config_dir=", "input="])
+		#except getopt.error as msg:
+		#	raise Usage(msg)
+		
+		parser = argparse.ArgumentParser()
+		parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose mode')
+		parser.add_argument('-i', '--input', dest='input', default='reports', help='Specify where are the reports')
+		parser.add_argument('-o', '--config', dest='config', default='conf', help='Specify where are the configs')
+		args = parser.parse_args()
+
+		verbose = args.verbose
+		f_configdir = args.config
+		f_input = args.input
+
+		print(args.verbose)
 		workdir = sys.path[0]
 		os.chdir(workdir)
-		
-		f_configdir = "conf"
-		f_input = "reports"
 
-		# option processing
-		for option, value in opts:
-			if option == "-v":
-				verbose = True
-			if option in ("-h", "--help"):
-				raise Usage(help_message)
-			if option in ("-o", "--config"):
-				f_configdir = value
-			if option in ("-i", "--input"):
-				f_input = value
+
+
+		# option processing NOT NEEDED WITH argparse !
+		# for option, value in opts:
+		#	if option == "-v":
+		#		verbose = True
+		#	if option in ("-h", "--help"):
+		#		raise Usage(help_message)
+		#	if option in ("-o", "--config"):
+		#		f_configdir = value
+		#	if option in ("-i", "--input"):
+		#		f_input = value
 				
 		print("Reading configuration files from %s ..." % (f_configdir))
 		(e2m, t2m) = read_configuration(f_configdir)
 		print(" done.")
 		
-		log_md5s_before = get_log_md5s()
+		#log_md5s_before = get_log_md5s()
 		
 		print("Reading %s" % (f_input))
 		files = []
@@ -147,7 +161,8 @@ def main(argv=None):
 		print >> sys.stderr, "\t for help use --help"
 		return 2
 
-
+# Call main() and give the return code that is the result of main()
 if __name__ == "__main__":
+	print("Starting Cuckoo2Mist converter.")
 	sys.exit(main())
 
