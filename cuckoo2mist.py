@@ -106,7 +106,8 @@ def main(argv=None):
 		os.chdir(workdir)
 		
 		f_configdir = "conf"
-		
+		f_input = "reports"
+
 		# option processing
 		for option, value in opts:
 			if option == "-v":
