@@ -2,3 +2,4 @@ reports/*
 logs/*
 !logs/LogsWillBeHere
 !reports/ReportsWillBeHere
+*.pyc
