@@ -66,37 +66,39 @@ class mistit(object):
 			return False		
 
 	# Write the mist report in outputfile. Returns true if it suceeded
-	def write(self, outputfile):
+	def write(self, content):
+		print("",end="")		
+		#print(content, end="")
+		#try:
+		#	w_file = file(outputfile, 'w')
+		#	w_file.write(self.mist.getvalue())
+		#	w_file.flush()
+		#	w_file.close()
+		#except Exception as e:
+		#	self.errormsg = e
+		#	return False
+		#return True
+
+
+	def ELFHash(self, key):
+		hash = 0
+		x    = 0
+		for i in range(len(key)):
+			hash = (hash << 4) + ord(key[i])
+			x = hash & 0xF0000000
+			if x != 0:
+				hash ^= (x >> 24)
+			hash &= ~x
+		return hash              
+
+	def int2hex(self, n, len):
+		assert n   is not None
+		assert len is not None
 		try:
-			w_file = file(outputfile, 'w')
-			w_file.write(self.mist.getvalue())
-			w_file.flush()
-			w_file.close()
-		except Exception as e:
-			self.errormsg = e
-			return False
-		return True
-
-
-	#def ELFHash(self, key):
-	#	hash = 0
-	#	x    = 0
-	#	for i in range(len(key)):
-	#		hash = (hash << 4) + ord(key[i])
-	#		x = hash & 0xF0000000
-	#		if x != 0:
-	#			hash ^= (x >> 24)
-	#		hash &= ~x
-	#	return hash              
-
-	#def int2hex(self, n, len):
-	#	assert n   is not None
-	#	assert len is not None
-	#	try:
-	#		hexval = ('0' * len) + "%x" % int(n)
-	#	except ValueError:
-	#		hexval = ('0' * len) + "%x" % int(n, 16)	
-	#	return hexval[len * -1:]
+			hexval = ('0' * len) + "%x" % int(n)
+		except ValueError:
+			hexval = ('0' * len) + "%x" % int(n, 16)	
+		return hexval[len * -1:]
 	
 	def convert2mist(self, value):
 		val_low = value.lower()
@@ -157,39 +159,58 @@ class mistit(object):
 	
 	# Converts a thread to mist	
 	def convert_thread(self, pid, tid, api_calls):
-		self.mist.write( '# process ' + str(pid) + ' thread ' + str(tid) + ' #\n' )
+		self.write( '# process ' + str(pid) + ' thread ' + str(tid) + ' #\n' )
 		for api_call in api_calls:
+			
 			arguments 	= api_call['arguments']
 			category 	= api_call['category']
 			api 		= api_call['api']
 			values = ""
+
+			typeFound=False
 			# Find the corresponding category node in the XML
 			category_node = self.elements2mist.find(".//" + category)
 			if category_node == None:
 				self.missing[category] = 1
 				continue
 			# Write in the report the category node code (cf mist format)
-			self.mist.write( category_node.attrib["mist"] + " " )
+			self.write( category_node.attrib["mist"] + " " )
 
 			# Find the corresponding api node in the XML
-			translate_node = self.elements2mist.find(".//" + api)
-			if translate_node == None:
+			api_node = self.elements2mist.find(".//" + api)
+			if api_node == None:
 				self.missing[api] = 1
 				continue
 			# Write in the report the api node code (cf mist format)
-			self.mist.write( translate_node.attrib["mist"] + " |" )
+			self.write( api_node.attrib["mist"] + " |" )
 
+			#for attrib_node in api_node.getchildren():
+			#attrib_node = api_node.getchildren()
+			# The argument is equal to 0 except if found otherwise
+			#value = self.types2mist.find(attrib_node.attrib["type"]).attrib["default"]
+
+			# For every arguments...
+			for key,val in arguments.items():						
+				for attrib_node in api_node.getchildren():			
+					if key == attrib_node.tag:
+						typeFound=True
+						valType=attrib_node.attrib["type"]
+						print(key + "--" + self.types2mist.find(valType))
+			if(typeFound):
+				print(self.types2mist.find(valType))
+				#value = self.types2mist.find(valType).attrib["default"]
+			else:
+				print("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
+				print("Cat: "+category+ " - Api : " + api + " - Key : " + key +" - Type : "+str(val))
+
+			#		print("",end="")	
+			#		#print(category + "-" + api + "--" + key +"/"+str(val))					
+			#		#value = self.convertValue(attrib_node.attrib["type"], val, attrib_node.tag)
+			#	else:
+			#		print(category + "-" + api + "--" + key +"/"+str(val))
+			#self.write( " " + value )
 			
-			for attrib_node in translate_node.getchildren():
-				value = self.types2mist.find(attrib_node.attrib["type"]).attrib["default"]
-	# There is something to do here
-				#for arg in api_call["arguments"]:
-					#if arg["name"] == attrib_node.tag:
-				for arg in arguments:
-					if arg[1] == attrib_node.tag:
-						value = self.convertValue(attrib_node.attrib["type"], arg["value"], attrib_node.tag)
-				self.mist.write( " " + value )
-			self.mist.write( '\n' )
+			self.write( '\n' )
 		return True
 	
 	def convertValue(self, ttype, value, name):
