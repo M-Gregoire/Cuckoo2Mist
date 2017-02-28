@@ -26,7 +26,6 @@ __author__ = "philipp trinius & gregoire martinache"
 __license__ = "GPL"
 __version__ = "0.3"
 
-
 import re
 import os, sys
 import argparse
@@ -38,24 +37,17 @@ import glob
 
 from thread_mist import th_seq2mist
 
+# Max_threads used to convert json
 max_threads	= 10
+# Can user interrupt ?
 user_interrupt	= False
 
-class Usage(Exception):
+# Handle errors
+class ErrorClass(Exception):
 	def __init__(self, msg):
 		self.msg = msg
 
-#def get_log_md5s():
-#	result = {}
-#	for f in os.listdir('log'):
-#		hfile = open(os.path.join('log', f), "r")
-#		h = hashlib.sha1()
-#		h.update(hfile.read())
-#		result[f] = h.hexdigest()
-#		hfile.close()
-#	print(result)
-#	return result
-
+# Load config
 def read_configuration(fconfigdir):
 	elements2mist = ET.ElementTree()
 	elements2mist.parse(os.path.join(fconfigdir, "cuckoo_elements2mist.xml"))
@@ -64,49 +56,51 @@ def read_configuration(fconfigdir):
 	types2mist.parse(os.path.join(fconfigdir, "cuckoo_types2mist.xml"))	
 	return elements2mist, types2mist
 
+# Generate mist reports based on the json reports and configs
 def generate_Mist_Reports(files, e2m, t2m):
 	global max_threads
-	### Determine the IDs of analysis that yet not have been converted ########################################
+	# Determine the IDs of analysis that yet not have been converted
 	seqReportRows = []
 	for ffile in files:
 		seqReportRows.append({'analysis_id': None, 'seq_path': ffile})
 
-	### Convert reports to MIST representation (in threads) ####################################
+	# Convert reports to MIST representation (in threads)
+	# thlist : List of all threads
 	thlist = []
 	try:
 		for seqReportRow in seqReportRows:
+			# If there is too much threads running, we wait another thread finishes
 			while len(thlist) >= max_threads:
 				time.sleep(5)
 				for t in thlist:
 					t.join(2.0)
 					if not t.isAlive():
 						thlist.remove(t)
+			# Open a new thread that will convert the json to mist
 			t = th_seq2mist(input_file=seqReportRow["seq_path"], elements2mist=e2m, types2mist=t2m, analysis_id=seqReportRow["analysis_id"])
 			thlist.append(t)
 			t.start()
+
 	except KeyboardInterrupt:
 		pass
+
+
+
+
+
 	print('\nAborting %s threads...' % len(thlist))
 	for t in thlist:
 		t.join()
 		thlist.remove(t)
 		print('  Aborted one thread - %s remaining' % len(thlist))
 		sys.stdout.flush()
-	print("  --> All threads aborted\n")
-
-
+	print("=> All threads aborted.")
 
 #def main(argv=None):
 def main():
 	# Get arguments
 	argv = sys.argv
 	try:
-		# argsparse is better than getopt !
-		#try:
-		#	opts, args = getopt.getopt(argv[1:], "hcio:v", ["help", "config_dir=", "input="])
-		#except getopt.error as msg:
-		#	raise Usage(msg)
-		
 		parser = argparse.ArgumentParser()
 		parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose mode')
 		parser.add_argument('-i', '--input', dest='input', default='reports', help='Specify where are the reports')
@@ -117,47 +111,33 @@ def main():
 		f_configdir = args.config
 		f_input = args.input
 
-		print(args.verbose)
+		# Workdir = directory where the script is
 		workdir = sys.path[0]
 		os.chdir(workdir)
-
-
-
-		# option processing NOT NEEDED WITH argparse !
-		# for option, value in opts:
-		#	if option == "-v":
-		#		verbose = True
-		#	if option in ("-h", "--help"):
-		#		raise Usage(help_message)
-		#	if option in ("-o", "--config"):
-		#		f_configdir = value
-		#	if option in ("-i", "--input"):
-		#		f_input = value
 				
-		print("Reading configuration files from %s ..." % (f_configdir))
+		# e2m : Element2Mist // t2m : Types2mist
+		print("Reading configuration files from %s/" % (f_configdir))
 		(e2m, t2m) = read_configuration(f_configdir)
-		print(" done.")
+		print("Done.")
 		
-		#log_md5s_before = get_log_md5s()
-		
-		print("Reading %s" % (f_input))
+		# Get reports
+		print("Reading reports from %s/" % (f_input))
 		files = []
 		if os.path.exists(f_input):
 			for ffile in os.listdir(f_input):
 				file = os.path.join(f_input, ffile)
 				if os.path.isfile(file) and file.endswith(".json"):
 					files.append(file)
-					print(".")
 		if len(files) == 0:
-			# no reports found
 			print ("No reports found.")
 			sys.exit(1)
 		else:
-			print (" done.")
-			
+			print ("%s reports read." % (len(files)))
+
+		# Generate mist reports for each reports.json found		
 		generate_Mist_Reports(files, e2m, t2m)
 							
-	except Usage, err:
+	except ErrorClass as err:
 		print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
 		print >> sys.stderr, "\t for help use --help"
 		return 2

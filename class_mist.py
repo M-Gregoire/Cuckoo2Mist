@@ -26,7 +26,6 @@ __author__ = "philipp trinius & gregoire martinache"
 __license__ = "GPL"
 __version__ = "0.3"
 
-
 import os
 import sys
 import re
@@ -36,15 +35,14 @@ from cStringIO import StringIO
 import gzip
 import json
 
-
+# Takes the json and create the mist !
 class mistit(object):
 
 	def __init__(self, input_file, elements2mist, types2mist):
 		self.infile = input_file
 		print('Generating MIST report for "%s"...' % self.infile)
-		self.skiplist = []
-
-		self.ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
+		#self.skiplist = []
+		#self.ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
 		self.errormsg = ''
 		self.mist = StringIO()
 		self.elements2mist = elements2mist
@@ -53,54 +51,52 @@ class mistit(object):
 		self.missing = {}
 		self.behaviour_report = ''
 
-
-	def read_report(self, freport):
-		json_data=open(freport, "r")
-		data = json.load(json_data)
-		return data
-
+	# Open the json report in behaviour_report and returns true if it suceeded
 	def parse(self):
 		if not os.path.exists(self.infile) and not os.path.exists(self.infile+".gz"):
 			self.errormsg = 'Behaviour report does not exist.'
 			return False
 		try:
-			self.behaviour_report = self.read_report(self.infile)
+			json_data=open(self.infile, "r")
+			self.behaviour_report = json.load(json_data)
+
 			return True
-		except Exception, e:
+		except Exception as e:
 			self.errormsg = 'Could not parse the behaviour report. (%s)' % e
 			return False		
 
+	# Write the mist report in outputfile. Returns true if it suceeded
 	def write(self, outputfile):
 		try:
 			w_file = file(outputfile, 'w')
 			w_file.write(self.mist.getvalue())
 			w_file.flush()
 			w_file.close()
-		except Exception, e:
+		except Exception as e:
 			self.errormsg = e
 			return False
 		return True
 
 
-	def ELFHash(self, key):
-		hash = 0
-		x    = 0
-		for i in range(len(key)):
-			hash = (hash << 4) + ord(key[i])
-			x = hash & 0xF0000000
-			if x != 0:
-				hash ^= (x >> 24)
-			hash &= ~x
-		return hash              
+	#def ELFHash(self, key):
+	#	hash = 0
+	#	x    = 0
+	#	for i in range(len(key)):
+	#		hash = (hash << 4) + ord(key[i])
+	#		x = hash & 0xF0000000
+	#		if x != 0:
+	#			hash ^= (x >> 24)
+	#		hash &= ~x
+	#	return hash              
 
-	def int2hex(self, n, len):
-		assert n   is not None
-		assert len is not None
-		try:
-			hexval = ('0' * len) + "%x" % int(n)
-		except ValueError:
-			hexval = ('0' * len) + "%x" % int(n, 16)	
-		return hexval[len * -1:]
+	#def int2hex(self, n, len):
+	#	assert n   is not None
+	#	assert len is not None
+	#	try:
+	#		hexval = ('0' * len) + "%x" % int(n)
+	#	except ValueError:
+	#		hexval = ('0' * len) + "%x" % int(n, 16)	
+	#	return hexval[len * -1:]
 	
 	def convert2mist(self, value):
 		val_low = value.lower()
@@ -219,6 +215,7 @@ class mistit(object):
 				except:
 					threads[thread_id] = []
 					threads[thread_id].append(call)
+			
 			processes[process_id] = {}
 			processes[process_id]["parent_id"] = parent_id 
 			processes[process_id]["process_name"] = process_name 
