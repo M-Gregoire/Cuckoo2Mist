@@ -49,20 +49,23 @@ class th_seq2mist(Thread):
 		self.analysis_id = analysis_id
 		self.output_file = froot + ".mist"
 
-	# Log in report2mist.log the msg passed as argument
-	def log(self, msg):
-		# Fullmsg = folder/name.json: msg
-		fullmsg = "%s: %s\n" % (self.input_file, msg)
-
-		log_path = "logs/report2mist.log"
-		# Create folder if does not exist
-		if not os.path.exists(os.path.dirname(log_path)):
-			os.mkdirs(os.path.dirname(log_path))
-
-		# Option a : append
-		hfile = open(log_path, "a")
-		hfile.write(fullmsg)
-		hfile.close()
+	######################################
+	## Using the logging module instead ##
+	######################################
+	#	# Log in report2mist.log the msg passed as argument
+	#	def log(self, msg):
+	#		# Fullmsg = folder/name.json: msg
+	#		fullmsg = "%s: %s\n" % (self.input_file, msg)
+	#
+	#		log_path = "logs/report2mist.log"
+	#		# Create folder if does not exist
+	#		if not os.path.exists(os.path.dirname(log_path)):
+	#			os.mkdirs(os.path.dirname(log_path))
+	#
+	#	# Option a : append
+	#	hfile = open(log_path, "a")
+	#	hfile.write(fullmsg)
+	#	hfile.close()
 
 	def run(self):
 		mist = mistit(self.input_file, self.elements2mist, self.types2mist)

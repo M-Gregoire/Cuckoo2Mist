@@ -46,12 +46,15 @@ class mistit(object):
 		#self.skiplist = []
 		#self.ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
 		#self.errormsg = ''
-		self.mist = StringIO()
+		#self.mist = StringIO()
 		self.elements2mist = elements2mist
 		self.types2mist = types2mist
+		# Cache used for hashing
 		self.cache = {}
+		# Used for warning when a category or API is find in the JSON report but not in the XML
 		self.missingApi = {}
 		self.missingCategory = {}
+		# The json report to convert
 		self.behaviour_report = ''
 		# This will be written in the report file
 		self.mist_report = ''
@@ -66,7 +69,7 @@ class mistit(object):
 			self.behaviour_report = json.load(json_data)
 			return True
 		except Exception as e:
-			log.error('Could not parse the behaviour report. (%s)' % e)
+			log.error('Could not parse the behaviour report. '+e)
 			return False		
 
 	# Write the mist report in outputfile. Returns true if it suceeded
@@ -117,51 +120,51 @@ class mistit(object):
 		
 	############################################
 
-	def splitfilename(self, fname):
-		pattern  = '(\"?(.*)\\\\([^\\/:?<>"|\s]+)\.([^\\/:?<>"|\s,-]{1,4})\"?(.*))|'
-		pattern += '(\"?(.*)\\\\([^\\/:?<>"|\s]+)\"?(.*))|'
-		pattern += '(\"?([^\\/:?<>"|\s]+)\.([^\\/:?<>"|\s,-]{1,4})\"?(.*))|'
-		pattern += '(\"?([^\\/:?<>"|\s-]+)\"?(.*))'
-		fname = fname.lower()
-		m = re.search(pattern, fname)
-		if m:
-			if m.group(1) != None:	
-				path 		= m.group(2)
-				filename 	= m.group(3)
-				extension 	= m.group(4)
-				parameter 	= m.group(5)
-			elif m.group(6) != None:
-				path 		= m.group(7)
-				filename 	= m.group(8)
-				extension 	= ''
-				parameter 	= m.group(9)
-			elif m.group(10) != None:
-				path 		= ''
-				filename 	= m.group(11)
-				extension 	= m.group(12)
-				parameter 	= m.group(13)
-			elif m.group(14) != None:
-				path 		= ''
-				filename 	= m.group(15)
-				extension 	= ''
-				parameter 	= m.group(16)
-		else:
-			path 		= ''
-			filename 	= fname
-			extension 	= ''
-			parameter 	= ''
-		return extension, path, filename, parameter
+	#def splitfilename(self, fname):
+	#	pattern  = '(\"?(.*)\\\\([^\\/:?<>"|\s]+)\.([^\\/:?<>"|\s,-]{1,4})\"?(.*))|'
+	#	pattern += '(\"?(.*)\\\\([^\\/:?<>"|\s]+)\"?(.*))|'
+	#	pattern += '(\"?([^\\/:?<>"|\s]+)\.([^\\/:?<>"|\s,-]{1,4})\"?(.*))|'
+	#	pattern += '(\"?([^\\/:?<>"|\s-]+)\"?(.*))'
+	#	fname = fname.lower()
+	#	m = re.search(pattern, fname)
+	#	if m:
+	#		if m.group(1) != None:	
+	#			path 		= m.group(2)
+	#			filename 	= m.group(3)
+	#			extension 	= m.group(4)
+	#			parameter 	= m.group(5)
+	#		elif m.group(6) != None:
+	#			path 		= m.group(7)
+	#			filename 	= m.group(8)
+	#			extension 	= ''
+	#			parameter 	= m.group(9)
+	#		elif m.group(10) != None:
+	#			path 		= ''
+	#			filename 	= m.group(11)
+	#			extension 	= m.group(12)
+	#			parameter 	= m.group(13)
+	#		elif m.group(14) != None:
+	#			path 		= ''
+	#			filename 	= m.group(15)
+	#			extension 	= ''
+	#			parameter 	= m.group(16)
+	#	else:
+	#		path 		= ''
+	#		filename 	= fname
+	#		extension 	= ''
+	#		parameter 	= ''
+	#	return extension, path, filename, parameter
 	
-	def file2mist(self, value, full):
-		(extension, path, filename, parameter) = self.splitfilename(value)	
-		mypath      = self.convert2mist(path)
-		myextension = self.convert2mist(extension)
-		if full:
-			myfilename  = self.convert2mist(filename)
-			myparameter = self.convert2mist(parameter)
-			return myextension + ' ' + mypath + ' ' + myfilename + ' ' + myparameter
-		else:
-			return myextension + ' ' + mypath
+	#def file2mist(self, value, full):
+	#	(extension, path, filename, parameter) = self.splitfilename(value)	
+	#	mypath      = self.convert2mist(path)
+	#	myextension = self.convert2mist(extension)
+	#	if full:
+	#		myfilename  = self.convert2mist(filename)
+	#		myparameter = self.convert2mist(parameter)
+	#		return myextension + ' ' + mypath + ' ' + myfilename + ' ' + myparameter
+	#	else:
+	#		return myextension + ' ' + mypath
 	
 	
 	# Converts a thread section in the JSON to mist	
@@ -221,6 +224,7 @@ class mistit(object):
 			self.addToReport( '\n' )
 		return True
 	
+	# Call the correct hashing function depending on the type
 	def convertValue(self, ttype, value):
 		result = 'QQQQQQQQ' + value
 		success = False
@@ -240,7 +244,7 @@ class mistit(object):
 			result = "00000000"
 		return result, success
 
-	
+	# Launch the conversion on all threads in the JSON
 	def convert(self):
 		processes = {}
 		procs = self.behaviour_report['behavior']['processes']
@@ -281,7 +285,6 @@ class mistit(object):
 		if len(self.missingApi.keys()) > 0:
 			for key,val in self.missingApi.items():
 				log.warning("The category <"+val+"> does not contains an API named <"+key+"> in the XML")
-			log.warning(self.missingApi)# - %s not in elements2mist." % (self.infile, ", ".self.missing.keys[api]))
 
 		return True
 
@@ -290,10 +293,10 @@ if __name__ == '__main__':
 	elements2mist.parse("conf/cuckoo_elements2mist_leveled.xml")
 	types2mist = ET.ElementTree()
 	types2mist.parse("conf/cuckoo_types2mist.xml")
-	x = mistit('reports/report.json', elements2mist, types2mist)
-	if x.parse() and x.convert():
+	json = mistit('reports/report.json', elements2mist, types2mist)
+	if json.parse() and json.convert():
 		log.info('Report generated')
 	else:
-		log.error(x.errormsg)
+		log.error(json.errormsg)
 	
  

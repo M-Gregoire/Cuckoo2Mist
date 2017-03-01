@@ -44,8 +44,6 @@ max_threads	= 10
 # Can user interrupt ?
 user_interrupt	= False
 
-
-
 # Handle errors
 class ErrorClass(Exception):
 	def __init__(self, msg):
@@ -60,7 +58,7 @@ def read_configuration(fconfigdir):
 	types2mist.parse(os.path.join(fconfigdir, "cuckoo_types2mist.xml"))	
 	return elements2mist, types2mist
 
-# Generate mist reports based on the json reports and configs
+# Manage the threads that convert the JSON
 def generate_Mist_Reports(files, e2m, t2m):
 	global max_threads
 	# Determine the IDs of analysis that yet not have been converted
@@ -88,8 +86,6 @@ def generate_Mist_Reports(files, e2m, t2m):
 	except KeyboardInterrupt:
 		pass
 
-
-
 	#print('\nAborting %s threads...' % len(thlist))
 	for t in thlist:
 		t.join()
@@ -98,7 +94,6 @@ def generate_Mist_Reports(files, e2m, t2m):
 		sys.stdout.flush()
 	print("Cuckoo2Mist is done !")
 
-#def main(argv=None):
 def main():
 	# Get arguments
 	argv = sys.argv
@@ -109,11 +104,14 @@ def main():
 		parser.add_argument('-o', '--config', dest='config', default='conf', help='Specify where are the configs')
 		args = parser.parse_args()
 		
+		# Change the logging level depending on the -v option
 		if args.verbose:
 			log.basicConfig(format="%(levelname)s: %(message)s", level=log.DEBUG)
 			log.info("Verbose output.")
 		else:
 			log.basicConfig(format="%l(levelname)s: %(message)s")
+
+		# Conf and input dir depending on the -o or -i options
 		f_configdir = args.config
 		f_input = args.input
 
