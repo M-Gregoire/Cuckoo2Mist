@@ -45,12 +45,13 @@ class mistit(object):
 		log.info('Generating MIST report for "%s"...' % self.infile)
 		#self.skiplist = []
 		#self.ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
-		self.errormsg = ''
+		#self.errormsg = ''
 		self.mist = StringIO()
 		self.elements2mist = elements2mist
 		self.types2mist = types2mist
 		self.cache = {}
-		self.missing = {}
+		self.missingApi = {}
+		self.missingCategory = {}
 		self.behaviour_report = ''
 		# This will be written in the report file
 		self.mist_report = ''
@@ -58,15 +59,14 @@ class mistit(object):
 	# Open the json report in behaviour_report and returns true if it suceeded
 	def parse(self):
 		if not os.path.exists(self.infile) and not os.path.exists(self.infile+".gz"):
-			self.errormsg = 'Behaviour report does not exist.'
+			log.error('Behaviour report does not exist.')
 			return False
 		try:
 			json_data=open(self.infile, "r")
 			self.behaviour_report = json.load(json_data)
-
 			return True
 		except Exception as e:
-			self.errormsg = 'Could not parse the behaviour report. (%s)' % e
+			log.error('Could not parse the behaviour report. (%s)' % e)
 			return False		
 
 	# Write the mist report in outputfile. Returns true if it suceeded
@@ -76,10 +76,14 @@ class mistit(object):
 		f.write(self.mist_report)
 		return True
 
+	# Add something to the report which will be written to a file at the end of the thread
 	def addToReport(self, msg):
 		self.mist_report+=msg
 		return True
 
+	############################################
+	############ Hash calculations #############
+	############################################
 
 	def ELFHash(self, key):
 		hash = 0
@@ -111,6 +115,8 @@ class mistit(object):
 			self.cache[val_low] = result
 		return result
 		
+	############################################
+
 	def splitfilename(self, fname):
 		pattern  = '(\"?(.*)\\\\([^\\/:?<>"|\s]+)\.([^\\/:?<>"|\s,-]{1,4})\"?(.*))|'
 		pattern += '(\"?(.*)\\\\([^\\/:?<>"|\s]+)\"?(.*))|'
@@ -158,7 +164,7 @@ class mistit(object):
 			return myextension + ' ' + mypath
 	
 	
-	# Converts a thread to mist	
+	# Converts a thread section in the JSON to mist	
 	def convert_thread(self, pid, tid, api_calls):
 		self.addToReport( '# process ' + str(pid) + ' thread ' + str(tid) + ' #\n' )
 		for api_call in api_calls:
@@ -172,15 +178,13 @@ class mistit(object):
 			# Find the corresponding category node in the XML
 			category_node = self.elements2mist.find(".//" + category)
 			if category_node == None:
-				self.missing[category] = 1
+				self.missingCategory[category] = 1
 				continue
 
 			# Find the corresponding api node in the XML
 			api_node = self.elements2mist.find(".//" + api)
 			if api_node == None:
-				#print("")
-				#print("No node "+api+" in category "+category+". Entry ignored")
-				self.missing[api] = 1
+				self.missingApi[api] = category
 				continue
 
 			# Write in the report the category node code (cf mist format)
@@ -271,8 +275,13 @@ class mistit(object):
 				# Convert the thread
 				self.convert_thread(p_id, t_id, processes[p_id]["threads"][t_id])
 
-		if len(self.missing.keys()) > 0:
-			self.errormsg = "Warning: %s - %s not in elements2mist." % (self.infile, ", ".join(self.missing.keys()))
+		if len(self.missingCategory.keys()) > 0:
+			for key,val in self.missingCategory.items():
+				log.warning("Category <"+key+"> does not exists in the XML")
+		if len(self.missingApi.keys()) > 0:
+			for key,val in self.missingApi.items():
+				log.warning("The category <"+val+"> does not contains an API named <"+key+"> in the XML")
+			log.warning(self.missingApi)# - %s not in elements2mist." % (self.infile, ", ".self.missing.keys[api]))
 
 		return True
 

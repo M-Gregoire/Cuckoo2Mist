@@ -10,6 +10,7 @@ Do not hesite to contribute !
 ## Todo :
 - [x] Full python3 support
 - [ ] Autogenerate config based on cuckoo report analysis
-- [ ] Add verbose functionnality (the option is useless right now)
-- [ ] Fonctionnal Cuckoo2Mist (soon !)
-
+- [x] Add verbose functionnality
+- [x] Fonctionnal Cuckoo2Mist (soon !)
+- [ ] Fully commented code
+- [ ] Write complete documentation
