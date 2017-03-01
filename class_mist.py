@@ -50,6 +50,8 @@ class mistit(object):
 		self.cache = {}
 		self.missing = {}
 		self.behaviour_report = ''
+		# This will be written in the report file
+		self.mist_report = ''
 
 	# Open the json report in behaviour_report and returns true if it suceeded
 	def parse(self):
@@ -66,16 +68,14 @@ class mistit(object):
 			return False		
 
 	# Write the mist report in outputfile. Returns true if it suceeded
-	def write(self, msg):
-		print(msg,end="")
-		try:
-			w_file = file(outputfile, 'w')
-			w_file.write(self.mist.getvalue())
-			w_file.flush()
-			w_file.close()
-		except Exception as e:
-			self.errormsg = e
-			return False
+	def write(self, outputfile):
+		print("Writing report to : "+outputfile)
+		f = open(outputfile, 'w')
+		f.write(self.mist_report)
+		return True
+
+	def addToReport(self, msg):
+		self.mist_report+=msg
 		return True
 
 
@@ -158,7 +158,7 @@ class mistit(object):
 	
 	# Converts a thread to mist	
 	def convert_thread(self, pid, tid, api_calls):
-		self.write( '# process ' + str(pid) + ' thread ' + str(tid) + ' #\n' )
+		self.addToReport( '# process ' + str(pid) + ' thread ' + str(tid) + ' #\n' )
 		for api_call in api_calls:
 			
 			arguments 	= api_call['arguments']
@@ -172,16 +172,19 @@ class mistit(object):
 			if category_node == None:
 				self.missing[category] = 1
 				continue
-			# Write in the report the category node code (cf mist format)
-			self.write( category_node.attrib["mist"] + " " )
 
 			# Find the corresponding api node in the XML
 			api_node = self.elements2mist.find(".//" + api)
 			if api_node == None:
+				#print("")
+				#print("No node "+api+" in category "+category+". Entry ignored")
 				self.missing[api] = 1
 				continue
-			# Write in the report the api node code (cf mist format)
-			self.write( api_node.attrib["mist"] + " |" )
+
+			# Write in the report the category node code (cf mist format)
+			self.addToReport( category_node.attrib["mist"] + " " )
+			# addToReport in the report the api node code (cf mist format)
+			self.addToReport( api_node.attrib["mist"] + " |" )
 
 			# For every arguments...
 			for key,val in arguments.items():
@@ -199,7 +202,7 @@ class mistit(object):
 					# We convert the value to MIST argument
 					success = False
 					valConv,success = self.convertValue(valType, valKey)
-					self.write(" "+valConv)
+					self.addToReport(" "+valConv)
 					# If conversion failed, show the unknow type to help debug
 					if(not success):
 						print("Unknow type found : "+valType)
@@ -209,7 +212,7 @@ class mistit(object):
 					print("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
 					print("Cat: "+category+ " - Api : " + api + " - Key : " + key +" - Value : "+str(val))
 			
-			self.write( '\n' )
+			self.addToReport( '\n' )
 		return True
 	
 	def convertValue(self, ttype, value):
@@ -280,6 +283,6 @@ if __name__ == '__main__':
 	if x.parse() and x.convert():
 		print('Report generated')
 	else:
-		print(x.errormsg)
+		print("ERROR : "+x.errormsg)
 	
  

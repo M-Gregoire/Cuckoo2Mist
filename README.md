@@ -6,3 +6,10 @@ Unfortunately, Cuckoo cannot produce the reports in mist as needed by malheur. I
 This project aims to update Cuckoo2Mist so it is maintained and well documented.
 
 Do not hesite to contribute !
+
+## Todo :
+- [x] Full python3 support
+- [ ] Autogenerate config based on cuckoo report analysis
+- [ ] Add verbose functionnality (the option is useless right now)
+- [ ] Fonctionnal Cuckoo2Mist (soon !)
+

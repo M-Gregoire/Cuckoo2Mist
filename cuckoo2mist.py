@@ -86,13 +86,11 @@ def generate_Mist_Reports(files, e2m, t2m):
 
 
 
-
-
 	print('\nAborting %s threads...' % len(thlist))
 	for t in thlist:
 		t.join()
 		thlist.remove(t)
-		print('  Aborted one thread - %s remaining' % len(thlist))
+		print('\nAborted one thread - %s remaining' % len(thlist))
 		sys.stdout.flush()
 	print("=> All threads aborted.")
 

@@ -67,5 +67,6 @@ class th_seq2mist(Thread):
 		if mist.parse() and mist.convert():
 			mist.write(self.output_file)
 			self.log(mist.errormsg)
+			print("Thread terminé")
 		else:
 			self.log(mist.errormsg)
