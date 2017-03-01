@@ -51,8 +51,14 @@ class th_seq2mist(Thread):
 	def log(self, msg):
 		# Fullmsg = folder/name.json: msg
 		fullmsg = "%s: %s\n" % (self.input_file, msg)
+
+		log_path = "logs/report2mist.log"
+		# Create folder if does not exist
+		if not os.path.exists(os.path.dirname(log_path)):
+			os.mkdirs(os.path.dirname(log_path))
+
 		# Option a : append
-		hfile = open("log/report2mist.log", "a")
+		hfile = open(log_path, "a")
 		hfile.write(fullmsg)
 		hfile.close()
 

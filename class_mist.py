@@ -195,7 +195,7 @@ class mistit(object):
 					if key == attrib_node.tag:
 						typeFound=True
 						valType=attrib_node.attrib["type"]
-						print(key + "--" + self.types2mist.find(valType))
+						#print(key + "--" + self.types2mist.find(valType))
 			if(typeFound):
 				print(self.types2mist.find(valType))
 				#value = self.types2mist.find(valType).attrib["default"]
