@@ -35,12 +35,16 @@ import hashlib
 import xml.etree.ElementTree as ET
 import glob
 
+import logging as log
+
 from thread_mist import th_seq2mist
 
 # Max_threads used to convert json
 max_threads	= 10
 # Can user interrupt ?
 user_interrupt	= False
+
+
 
 # Handle errors
 class ErrorClass(Exception):
@@ -86,13 +90,13 @@ def generate_Mist_Reports(files, e2m, t2m):
 
 
 
-	print('\nAborting %s threads...' % len(thlist))
+	#print('\nAborting %s threads...' % len(thlist))
 	for t in thlist:
 		t.join()
 		thlist.remove(t)
-		print('\nAborted one thread - %s remaining' % len(thlist))
+		log.info('On thread has finished - %s remaining' % len(thlist))
 		sys.stdout.flush()
-	print("=> All threads aborted.")
+	print("Cuckoo2Mist is done !")
 
 #def main(argv=None):
 def main():
@@ -104,8 +108,12 @@ def main():
 		parser.add_argument('-i', '--input', dest='input', default='reports', help='Specify where are the reports')
 		parser.add_argument('-o', '--config', dest='config', default='conf', help='Specify where are the configs')
 		args = parser.parse_args()
-
-		verbose = args.verbose
+		
+		if args.verbose:
+			log.basicConfig(format="%(levelname)s: %(message)s", level=log.DEBUG)
+			log.info("Verbose output.")
+		else:
+			log.basicConfig(format="%l(levelname)s: %(message)s")
 		f_configdir = args.config
 		f_input = args.input
 
@@ -114,12 +122,12 @@ def main():
 		os.chdir(workdir)
 				
 		# e2m : Element2Mist // t2m : Types2mist
-		print("Reading configuration files from %s/" % (f_configdir))
+		log.info("Reading configuration files from %s/" % (f_configdir))
 		(e2m, t2m) = read_configuration(f_configdir)
-		print("Done.")
+		log.info("Done.")
 		
 		# Get reports
-		print("Reading reports from %s/" % (f_input))
+		log.info("Reading reports from %s/" % (f_input))
 		files = []
 		if os.path.exists(f_input):
 			for ffile in os.listdir(f_input):
@@ -127,10 +135,10 @@ def main():
 				if os.path.isfile(file) and file.endswith(".json"):
 					files.append(file)
 		if len(files) == 0:
-			print ("No reports found.")
+			log.error("No reports found.")
 			sys.exit(1)
 		else:
-			print ("%s reports read." % (len(files)))
+			log.info("%s reports read." % (len(files)))
 
 		# Generate mist reports for each reports.json found		
 		generate_Mist_Reports(files, e2m, t2m)

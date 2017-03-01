@@ -34,6 +34,8 @@ import subprocess
 from class_mist import mistit
 import gzip
 
+import logging as log
+
 class th_seq2mist(Thread):
 	# This thread converts a new sectional XML report in a MIST report
 	def __init__(self, input_file, elements2mist, types2mist, analysis_id):
@@ -67,6 +69,6 @@ class th_seq2mist(Thread):
 		if mist.parse() and mist.convert():
 			mist.write(self.output_file)
 			self.log(mist.errormsg)
-			print("Thread terminé")
+			log.info("Thread terminé")
 		else:
 			self.log(mist.errormsg)

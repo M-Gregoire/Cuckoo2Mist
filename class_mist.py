@@ -35,12 +35,14 @@ from io import StringIO
 import gzip
 import json
 
+import logging as log
+
 # Takes the json and create the mist !
 class mistit(object):
 
 	def __init__(self, input_file, elements2mist, types2mist):
 		self.infile = input_file
-		print('Generating MIST report for "%s"...' % self.infile)
+		log.info('Generating MIST report for "%s"...' % self.infile)
 		#self.skiplist = []
 		#self.ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
 		self.errormsg = ''
@@ -69,7 +71,7 @@ class mistit(object):
 
 	# Write the mist report in outputfile. Returns true if it suceeded
 	def write(self, outputfile):
-		print("Writing report to : "+outputfile)
+		log.info("Writing report to : "+outputfile)
 		f = open(outputfile, 'w')
 		f.write(self.mist_report)
 		return True
@@ -205,12 +207,12 @@ class mistit(object):
 					self.addToReport(" "+valConv)
 					# If conversion failed, show the unknow type to help debug
 					if(not success):
-						print("Unknow type found : "+valType)
+						log.warning("Unknow type found : "+valType)
 
 				# If entry not found, warning message so the user can add it to the XML
 				else:
-					print("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
-					print("Cat: "+category+ " - Api : " + api + " - Key : " + key +" - Value : "+str(val))
+					log.warning("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
+					log.warning("Cat: "+category+ " - Api : " + api + " - Key : " + key +" - Value : "+str(val))
 			
 			self.addToReport( '\n' )
 		return True
@@ -230,7 +232,7 @@ class mistit(object):
 			result = self.int2hex(value, 8)
 			success = True
 		else:
-			print("An unknow type has been detected in the XML file. Argument ignored")
+			log.warning("An unknow type has been detected in the XML file. Argument ignored")
 			result = "00000000"
 		return result, success
 
@@ -281,8 +283,8 @@ if __name__ == '__main__':
 	types2mist.parse("conf/cuckoo_types2mist.xml")
 	x = mistit('reports/report.json', elements2mist, types2mist)
 	if x.parse() and x.convert():
-		print('Report generated')
+		log.info('Report generated')
 	else:
-		print("ERROR : "+x.errormsg)
+		log.error(x.errormsg)
 	
  
