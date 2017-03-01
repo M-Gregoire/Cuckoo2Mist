@@ -12,5 +12,5 @@ Do not hesite to contribute !
 - [ ] Autogenerate config based on cuckoo report analysis
 - [x] Add verbose functionnality
 - [x] Fonctionnal Cuckoo2Mist (soon !)
-- [ ] Fully commented code
+- [x] Fully commented code
 - [ ] Write complete documentation
