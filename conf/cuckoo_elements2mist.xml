@@ -66,7 +66,13 @@
 	<threading mist="04">
 
 		<CreateRemoteThread mist="01">
+			<process_identifier type="type_integer"/>
 			<thread_identifier type="type_integer"/>
+			<flags type="type_integer"/>
+			<parameter type="type_hex"/>
+			<process_handle type="type_hex"/>
+			<stack_size type="type_integer"/>
+			<function_address type="type_hex"/>
 		</CreateRemoteThread>
 	
 		<OpenThread mist="02">
@@ -83,6 +89,15 @@
 	
 		<NtSetContextThread mist="05">
 			<thread_handle type="type_hex"/>
+			<!-- Register is a dictionnary
+			Example : {'ebx': 2147303424, 'eax': 4270000, 'edi': 0, 'esp': 1245180, 'esi': 4, 'edx': 1203832, 'eip': 2088830709, 'ebp': 0, 'ecx': 2088822052}
+			
+			which is not supported yet. Let's consider it like a string for the moment
+			-->
+			<registers type="type_string"/>
+			<!-- -->
+			<register_handle type="type_hex"/>
+			<process_identifier type="type_integer"/>
 		</NtSetContextThread>
 	
 		<NtSuspendThread mist="06">
@@ -95,6 +110,8 @@
 	
 		<NtResumeThread mist="08">
 			<thread_handle type="type_hex"/>
+			<suspend_count type="type_integer"/>
+			<process_identifier type="type_integer"/>
 		</NtResumeThread>
 		
 
@@ -130,6 +147,17 @@
  		
 		<CreateProcessInternalW mist="07">
 			<creation_flags type="type_integer"/>
+			<process_handle type="type_hex"/>
+			<current_directory type="type_string"/>
+			<thread_handle type="type_hex"/>
+			<command_line type="type_string"/>
+			<process_identifier type="type_integer"/>
+			<filepath type="type_string"/>
+			<inherit_handle type="type_integer"/>
+			<thread_identifier type="type_integer"/>
+			<filepath_r type="type_string"/>
+			<track type="type_integer"/>
+			<inherit_handle type="type_integer"/>
 		</CreateProcessInternalW>
  		
 		<ExitProcess mist="08">
@@ -156,6 +184,11 @@
  		
 		<LdrGetProcedureAddress mist="02">
 			<function_address type="type_hex"/>
+			<module_address type="type_hex"/>
+			<function_name type="type_string"/>
+			<module type="type_string"/>
+			<inherit_handle type="type_integer"/>
+			<ordinal type="type_integer"/>
 		</LdrGetProcedureAddress>
  		
 		<NtDelayExecution mist="03">
@@ -175,11 +208,15 @@
 		</NtClose>
  		
 		<LdrLoadDll mist="07">
-			<module_name type="type_str"/>
+			<module_name type="type_string"/>
+			<module_address type="type_hex"/>
+			<basename type="type_string"/>
+			<flags type="type_integer"/>
 		</LdrLoadDll>
  		
 		<LdrGetDllHandle mist="08">
-			<module_name type="type_str"/>
+			<module_name type="type_string"/>
+			<module_address type="type_hex"/>
 		</LdrGetDllHandle>
  	
 	</system>
@@ -314,6 +351,8 @@
         
         	<NtOpenKey mist="12">
 			<key_handle type="type_hex"/>
+			<regkey type="type_string"/>
+			<desired_access type="type_hex"/>
 		</NtOpenKey>
         
 	</registry>
@@ -373,6 +412,11 @@
         
         <NtAllocateVirtualMemory mist="03">
 		<process_handle type="type_hex"/>
+		<base_address type="type_hex"/>
+		<protection type="type_integer"/>
+		<allocation_type type="type_integer"/>
+		<process_identifier type="type_integer"/>
+		<region_size type="type_integer"/>
         </NtAllocateVirtualMemory>
         
     </memory>

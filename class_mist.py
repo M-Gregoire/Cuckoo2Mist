@@ -66,18 +66,17 @@ class mistit(object):
 			return False		
 
 	# Write the mist report in outputfile. Returns true if it suceeded
-	def write(self, content):
-		print("",end="")		
-		#print(content, end="")
-		#try:
-		#	w_file = file(outputfile, 'w')
-		#	w_file.write(self.mist.getvalue())
-		#	w_file.flush()
-		#	w_file.close()
-		#except Exception as e:
-		#	self.errormsg = e
-		#	return False
-		#return True
+	def write(self, msg):
+		print(msg,end="")
+		try:
+			w_file = file(outputfile, 'w')
+			w_file.write(self.mist.getvalue())
+			w_file.flush()
+			w_file.close()
+		except Exception as e:
+			self.errormsg = e
+			return False
+		return True
 
 
 	def ELFHash(self, key):
@@ -184,46 +183,53 @@ class mistit(object):
 			# Write in the report the api node code (cf mist format)
 			self.write( api_node.attrib["mist"] + " |" )
 
-			#for attrib_node in api_node.getchildren():
-			#attrib_node = api_node.getchildren()
-			# The argument is equal to 0 except if found otherwise
-			#value = self.types2mist.find(attrib_node.attrib["type"]).attrib["default"]
-
 			# For every arguments...
-			for key,val in arguments.items():						
+			for key,val in arguments.items():
+				# We try to find the the corresponding type in the XML						
 				for attrib_node in api_node.getchildren():			
 					if key == attrib_node.tag:
 						typeFound=True
-						valType=attrib_node.attrib["type"]
-						#print(key + "--" + self.types2mist.find(valType))
-			if(typeFound):
-				print(self.types2mist.find(valType))
-				#value = self.types2mist.find(valType).attrib["default"]
-			else:
-				print("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
-				print("Cat: "+category+ " - Api : " + api + " - Key : " + key +" - Type : "+str(val))
+						break
+				# If we found the correct entry in the XML, we generate the mist's line report
+				if(typeFound):
+					# Type of the entry (String, hex or integer)
+					valType=attrib_node.attrib["type"]
+					# Value of the entry
+					valKey = str(val)
+					# We convert the value to MIST argument
+					success = False
+					valConv,success = self.convertValue(valType, valKey)
+					self.write(" "+valConv)
+					# If conversion failed, show the unknow type to help debug
+					if(not success):
+						print("Unknow type found : "+valType)
 
-			#		print("",end="")	
-			#		#print(category + "-" + api + "--" + key +"/"+str(val))					
-			#		#value = self.convertValue(attrib_node.attrib["type"], val, attrib_node.tag)
-			#	else:
-			#		print(category + "-" + api + "--" + key +"/"+str(val))
-			#self.write( " " + value )
+				# If entry not found, warning message so the user can add it to the XML
+				else:
+					print("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
+					print("Cat: "+category+ " - Api : " + api + " - Key : " + key +" - Value : "+str(val))
 			
 			self.write( '\n' )
 		return True
 	
-	def convertValue(self, ttype, value, name):
+	def convertValue(self, ttype, value):
 		result = 'QQQQQQQQ' + value
+		success = False
 		if ttype == 'type_string':
-			result = self.convert2mist(value)		
+			result = self.convert2mist(value)	
+			success = True
 		elif ttype == 'type_hex':
 			result = value[2:10]
 			while len(result) < 8:
-				result = "0" + result 			
+				result = "0" + result	
+			success = True	
 		elif ttype == 'type_integer':
 			result = self.int2hex(value, 8)
-		return result
+			success = True
+		else:
+			print("An unknow type has been detected in the XML file. Argument ignored")
+			result = "00000000"
+		return result, success
 
 	
 	def convert(self):
@@ -272,7 +278,7 @@ if __name__ == '__main__':
 	types2mist.parse("conf/cuckoo_types2mist.xml")
 	x = mistit('reports/report.json', elements2mist, types2mist)
 	if x.parse() and x.convert():
-		x.write('report/report.mist')
+		print('Report generated')
 	else:
 		print(x.errormsg)
 	
