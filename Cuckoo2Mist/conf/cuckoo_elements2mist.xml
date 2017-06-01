@@ -18,7 +18,15 @@
 	<network mist="02">
 		
 		<HttpOpenRequestA mist="01">
-			<dummyEmpty type="type_integer"/>
+			<connect_handle type="type_hex"/>
+			<http_version type="type_string"/>
+			<flags type="type_integer"/>
+			<http_method type="type_string"/>
+			<referer type="type_string"/>
+			<path type="type_string"/>
+			<headers type="type_string"/>
+			<request_handle type="type_hex"/>
+			<post_data type="type_string"/>
 		</HttpOpenRequestA>
 
 		<getaddrinfo mist="02">
@@ -30,7 +38,9 @@
 		</InternetOpenUrlA>
 	
 		<HttpSendRequestA mist="04">
-			<dummyEmpty type="type_integer"/>
+			<post_data type="type_string"/>
+			<headers type="type_string"/>
+			<request_handle type="type_string"/>
 		</HttpSendRequestA>
 	
 		<URLDownloadToFileW mist="05">
@@ -158,6 +168,7 @@
 			<filepath_r type="type_string"/>
 			<track type="type_integer"/>
 			<inherit_handle type="type_integer"/>
+			<inherit_handles type="type_integer"/>
 		</CreateProcessInternalW>
  		
 		<ExitProcess mist="08">
@@ -294,7 +305,7 @@
 		</RegEnumValueW>
  		
 		<RegCloseKey mist="04">
-			<dummyEmpty type="type_integer"/>
+			<key_handle type="type_hex"/>
 		</RegCloseKey>
  		
 		<RegDeleteKeyW mist="05">
@@ -306,7 +317,11 @@
 		</RegSetValueExW>
  		
 		<RegQueryValueExA mist="07">
-			<dummyEmpty type="type_integer"/>
+			<regkey type="type_string"/>
+			<reg_type type="type_integer"/>
+			<regkey_r type="type_string"/>
+			<key_handle type="type_hex"/>
+			<value type="type_string"/>
 		</RegQueryValueExA>
  		
 		<RegEnumKeyExW mist="08">
@@ -314,7 +329,12 @@
 		</RegEnumKeyExW>
  		
 		<RegOpenKeyExW mist="09">
-			<dummyEmpty type="type_integer"/>
+			<base_handle type="type_hex"/>
+			<key_handle type="type_hex"/>
+			<regkey type="type_string"/>
+			<access type="type_hex"/>
+			<options type="type_integer"/>
+			<regkey_r type="type_string"/>
 		</RegOpenKeyExW>
  		
 		<RegSetValueExA mist="0a">
@@ -330,7 +350,16 @@
 		</RegEnumKeyW>
  		
 		<RegCreateKeyExA mist="0d">
-			<dummyEmpty type="type_integer"/>
+			<regkey type="type_string"/>
+			<regkey_r type="type_string"/>
+			<reg_type type="type_integer"/>
+			<base_handle type="type_hex"/>
+			<key_handle type="type_hex"/>
+			<options type="type_integer"/>
+			<disposition type="type_integer"/>
+			<class type="type_string"/>
+			<access type="type_hex"/>
+			<value type="type_string"/>
 		</RegCreateKeyExA>
  		
 		<RegOpenKeyExA mist="0e">
@@ -346,7 +375,11 @@
 		</RegEnumKeyExA>
  		
 		<RegQueryValueExW mist="11">
-			<dummyEmpty type="type_integer"/>
+			<key_handle type="type_hex"/>
+			<regkey_r type="type_string"/>
+			<value type="type_string"/>
+			<reg_type type="type_integer"/>
+			<regkey type="type_string"/>
 		</RegQueryValueExW>
         
         	<NtOpenKey mist="12">

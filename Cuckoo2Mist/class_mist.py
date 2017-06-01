@@ -37,6 +37,9 @@ import json
 
 import logging as log
 
+
+##########################################
+
 # Takes the json and create the mist !
 class mistit(object):
 
@@ -69,7 +72,7 @@ class mistit(object):
 			self.behaviour_report = json.load(json_data)
 			return True
 		except Exception as e:
-			log.error('Could not parse the behaviour report. '+e)
+			log.error('Could not parse the behaviour report. {%s}' % e)
 			return False		
 
 	# Write the mist report in outputfile. Returns true if it suceeded
@@ -198,7 +201,8 @@ class mistit(object):
 			# For every arguments...
 			for key,val in arguments.items():
 				# We try to find the the corresponding type in the XML						
-				for attrib_node in api_node.getchildren():			
+				for attrib_node in api_node.getchildren():
+					typeFound=False			
 					if key == attrib_node.tag:
 						typeFound=True
 						break
@@ -207,20 +211,32 @@ class mistit(object):
 					# Type of the entry (String, hex or integer)
 					valType=attrib_node.attrib["type"]
 					# Value of the entry
-					valKey = str(val)
+					# Test if printable
+					try:
+						valKey = str(val)
+					except:
+						valKey = "00000000"
 					# We convert the value to MIST argument
 					success = False
 					valConv,success = self.convertValue(valType, valKey)
 					self.addToReport(" "+valConv)
 					# If conversion failed, show the unknow type to help debug
 					if(not success):
-						log.warning("Unknow type found : "+valType)
-
+						try:
+							log.warning("Unknow type found : {%s}" % (valType))
+						except:
+							pass
 				# If entry not found, warning message so the user can add it to the XML
 				else:
-					log.warning("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
-					log.warning("Cat: "+category+ " - Api : " + api + " - Key : " + key +" - Value : "+str(val))
-			
+					try:
+						log.warning("A key seems to be missing in the cuckoo_elements2mist.xml. See readme.md for informations.")
+						# If the key is value, the val variable is very long and makes the log hard to read.
+						if key == "value":
+							log.warning("Cat: {%s} - Api : {%s} - Key : {%s}" % (category, api, key))
+						else:
+							log.warning("Cat: {%s} - Api : {%s} - Key : {%s} - Value : {%s}" % (category, api, key,val))
+					except:
+						pass
 			self.addToReport( '\n' )
 		return True
 	
@@ -240,7 +256,10 @@ class mistit(object):
 			result = self.int2hex(value, 8)
 			success = True
 		else:
-			log.warning("An unknow type has been detected in the XML file. Argument ignored")
+			try:
+				log.warning("An unknow type has been detected in the XML file. Argument ignored")
+			except:
+				pass
 			result = "00000000"
 		return result, success
 
@@ -281,10 +300,16 @@ class mistit(object):
 
 		if len(self.missingCategory.keys()) > 0:
 			for key,val in self.missingCategory.items():
-				log.warning("Category <"+key+"> does not exists in the XML")
+				try:
+					log.warning("Category <%s> does not exists in the XML" % key)
+				except:
+					pass
 		if len(self.missingApi.keys()) > 0:
 			for key,val in self.missingApi.items():
-				log.warning("The category <"+val+"> does not contains an API named <"+key+"> in the XML")
+				try:
+					log.warning("The category <%s> does not contains an API named <%s> in the XML" % (val,key))
+				except:
+					pass
 
 		return True
 
