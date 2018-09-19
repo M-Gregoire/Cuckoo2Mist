@@ -4,8 +4,8 @@ Original description : The Malware Instruction Set (MIST) is a representation fo
 
 ## Goals
 
-I'm using the awesome [https://cuckoosandbox.org](Cuckoo Sandbox) and I wanted to be able to use [http://www.mlsec.org/malheur](malheur) with it.  
-Unfortunately, Cuckoo cannot produce the reports in mist as needed by malheur. I found no working and easy solution to convert the reports from Cuckoo to mist file that malheur could use. [https://sourceforge.net/u/trinius/profile/](Philipp Trinius) wrote Cuckoo2Mist that does just that, but sadly, this project is not maintained, does not work with the current Cuckoo reports nor Python 3.  
+I'm using the awesome [Cuckoo Sandbox](https://cuckoosandbox.org) and I wanted to be able to use [malheur](http://www.mlsec.org/malheur) with it.  
+Unfortunately, Cuckoo cannot produce the reports in mist as needed by malheur. I found no working and easy solution to convert the reports from Cuckoo to mist file that malheur could use. [Philipp Trinius](https://sourceforge.net/u/trinius/profile/) wrote Cuckoo2Mist that does just that, but sadly, this project is not maintained, does not work with the current Cuckoo reports nor Python 3.  
 
 This project aims to update Cuckoo2Mist so it is maintained and well documented.  
 
