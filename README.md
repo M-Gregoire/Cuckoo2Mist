@@ -1,4 +1,4 @@
-# Cuckoo2Mist
+# Cuckoo2Mist [![Build Status](https://travis-ci.org/M-Gregoire/Cuckoo2Mist.svg?branch=master)](https://travis-ci.org/M-Gregoire/Cuckoo2Mist) [![Coverage Status](https://coveralls.io/repos/github/M-Gregoire/Cuckoo2Mist/badge.svg?branch=master)](https://coveralls.io/github/M-Gregoire/Cuckoo2Mist?branch=master)
 
 Original description : The Malware Instruction Set (MIST) is a representation for monitored behavior of malicious software. The representation is optimized for effective and efficient analysis of behavior using data mining and machine learn- ing techniques. It can be obtained automatically during analysis of malware with a behavior monitoring tool or by converting existing behavior reports. The representation is not restricted to a particular monitoring tool and thus can also be used as a meta language to unify behavior reports of different sources.
 
