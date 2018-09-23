@@ -14,6 +14,6 @@ There are some options you can add to `cuckoo2.mist.py` :
 - [x] Full python3 support
 - [ ] Autogenerate config based on cuckoo report analysis
 - [x] Add verbose functionnality
-- [x] Fonctionnal Cuckoo2Mist (soon !)
+- [x] Fonctionnal Cuckoo2Mist
 - [x] Fully commented code
 - [ ] Write complete documentation
