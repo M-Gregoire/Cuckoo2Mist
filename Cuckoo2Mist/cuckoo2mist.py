@@ -109,7 +109,7 @@ def main():
 			log.basicConfig(format="%(levelname)s: %(message)s", level=log.DEBUG)
 			log.info("Verbose output.")
 		else:
-			log.basicConfig(format="%l(levelname)s: %(message)s")
+			log.basicConfig(format="%(levelname)s: %(message)s",level=log.ERROR)
 
 		# Conf and input dir depending on the -o or -i options
 		f_configdir = args.config
